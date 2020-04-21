@@ -89,3 +89,23 @@ let rec tri_creation_max l =
 (* --------- *)
 (* TRI PIVOT *)
 (* --------- *)
+
+let rec partitionne_pivot_bis l pivot l1 l2 l3 =
+  match l with
+  |[] -> (l1, l2, l3)
+  |h::t ->
+      if h < pivot
+      then partitionne_pivot_bis t pivot (h :: l1) l2 l3
+      else if h = pivot
+      then partitionne_pivot_bis t pivot l1 (h :: l2) l3
+      else partitionne_pivot_bis t pivot l1 l2 (h :: l3);;
+
+let partitionne_pivot l pivot =
+  match l with
+  |[] -> failwith "Votre liste est vide"
+  |t -> partitionne_pivot_bis t pivot [] [] [];;
+
+let tri_pivot l =
+  match l with
+  |[] -> failwith "Votre liste est vide"
+  |h::t -> partitionne_pivot l h;;
