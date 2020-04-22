@@ -1,6 +1,10 @@
 (* L’utilisation de List.hd et List.tl est globalement interdite. *)
 
-
+(*
+A TESTER:
+  -> Nombres négatifs,
+  -> Doublons.
+*)
 
 
 
@@ -85,6 +89,20 @@ let rec tri_creation_max l =
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (* --------- *)
 (* TRI PIVOT *)
 (* --------- *)
@@ -129,6 +147,23 @@ let rec tri_pivot l =
   |h::t ->
       match partitionne_pivot l h with
       |(l1, l2, l3) -> tri_pivot l1 @ l2 @ tri_pivot l3;;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -217,3 +252,153 @@ let tri_comptage l borne_max =
   match l with
   |[] -> failwith "La liste est vide, aucun élément à trier"
   |_ -> reconstituer_liste (liste_associative l borne_max);;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(* ---------------- *)
+(* TRI DE PERLES V1 *)
+(* ---------------- *)
+
+(*
+Récupération des fonctions selectionne_max et liste_entiers
+*)
+
+(*
+ajoute1 nb_premiers_elements l ajoute 1 aux nb_premiers_elements de l.
+*)
+let rec ajout1 nb_premiers_elements l = 
+  match l with
+  |[] -> []
+  |h::t ->
+      if nb_premiers_elements > 0
+      then (h+1) :: ajout1 (nb_premiers_elements-1) t
+      else h :: t;;
+
+
+(*
+Si l1 = [x1;...;xn], alors pour tout xi de l1, incrementation l1 l2 ajoute 1 à tous les xi premiers elements de l2.
+*)
+let rec incrementation l1 l2 =
+  match l1 with
+  |[] -> l2
+  |h::t ->
+      if h=0
+      then incrementation t l2
+      else incrementation t (ajout1 h l2);;
+
+
+
+(*
+nombre_positifs l renvoie le nombre d’éléments de l strictement positifs.
+*)
+let rec nombre_positifs l =
+  match l with
+  |[] -> 0
+  |h::t ->
+      if h > 0
+      then 1 + nombre_positifs t
+      else nombre_positifs t;;
+
+
+
+(*
+enleve1 l décrémente de 1 tous les éléments de l qui sont strictement positifs.
+*)
+let rec enleve1 l =
+  match l with
+  |[] -> []
+  |h::t ->
+      if h > 0
+      then (h-1) :: enleve1 t
+      else h :: enleve1 t;;
+
+
+(*
+decompte_elements l n créé la liste des nombres représentés dans l.
+Plus clairement, decompte_elements l n récupère le nombre d’éléments positifs dans l,
+et le concatène au rappel de la fonction sur l,
+dans laquelle tous les éléments positifs ont été décrémentés de 1.
+Cette récursion a lieu n fois.
+*)
+let rec decompte_elements l n =
+  match l with
+  |[] -> []
+  |h::t ->
+      if n = 0
+      then [nombre_positifs l]
+      else [nombre_positifs l] @ (decompte_elements (enleve1 l) (n-1));;
+
+(*
+inverser_l inverse les éléments de l (contrainte: interdit d’utiliser List.rev).
+*)
+let rec inverser l =
+  match l with
+  |[] -> []
+  |h::[] -> [h]
+  |h::t -> (inverser t) @ [h];;
+
+
+
+
+
+(*
+tri_perles1 récupère le maximum max de l et crée une liste de max 0.
+Cette liste est alors incrémentée selon l, puis le résultat est décompté List.length l - 1 fois.
+Enfin, le décompte est inversé, ce qui renvoie la liste l triée.
+*)
+let tri_perles1 l =
+  match l with
+  |[] -> failwith "La liste est vide, aucun élément à trier"
+  |_ -> inverser (decompte_elements (incrementation l (liste_entiers 0 (selectionne_max l))) ((List.length l) - 1));; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(* ---------------- *)
+(* TRI DE PERLES V2 *)
+(* ---------------- *)
