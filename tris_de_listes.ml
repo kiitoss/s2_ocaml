@@ -90,6 +90,16 @@ let rec tri_creation_max l =
 (* TRI PIVOT *)
 (* --------- *)
 
+(*
+ici, le cas d'une liste vide en entrée ne renvoie pas d'erreur "liste vide" mais simplement une liste vide.
+*)
+
+(*
+partitionne_pivot l pivot partage la liste l en trois listes et les renvoie sous forme de triplet.
+La première liste contenant tous les éléments de l plus petits que le pivot,
+la seconde contenant tous les éléments qui lui sont égaux,
+la troisième contenant tous les éléments qui lui sont supérieurs.
+*)
 let rec partitionne_pivot_bis l pivot l1 l2 l3 =
   match l with
   |[] -> (l1, l2, l3)
@@ -100,12 +110,23 @@ let rec partitionne_pivot_bis l pivot l1 l2 l3 =
       then partitionne_pivot_bis t pivot l1 (h :: l2) l3
       else partitionne_pivot_bis t pivot l1 l2 (h :: l3);;
 
+
+
 let partitionne_pivot l pivot =
   match l with
-  |[] -> failwith "Votre liste est vide"
   |t -> partitionne_pivot_bis t pivot [] [] [];;
 
-let tri_pivot l =
+
+
+
+(*
+tri_pivot l sélectionne la tête x de l (qu’on appelle le pivot) et calcule le triplet de listes (l1,l2,l3).
+Le résultat du rappel récursif de la fonction sur l1 et l3 est ensuite concaténé à l2,
+dans le bon ordre, afin de renvoyer la liste finale triée.
+*)
+let rec tri_pivot l =
   match l with
-  |[] -> failwith "Votre liste est vide"
-  |h::t -> partitionne_pivot l h;;
+  |[] -> []
+  |h::t ->
+      match partitionne_pivot l h with
+      |(l1, l2, l3) -> tri_pivot l1 @ l2 @ tri_pivot l3;;
