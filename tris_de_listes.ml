@@ -4,6 +4,10 @@
 A TESTER:
   -> Nombres négatifs,
   -> Doublons.
+
+A VERIFIER:
+  -> Pas de rec inutile,
+  -> Pas de match dans match avant tri perles 2.
 *)
 
 
@@ -402,3 +406,82 @@ let tri_perles1 l =
 (* ---------------- *)
 (* TRI DE PERLES V2 *)
 (* ---------------- *)
+
+(*
+Récupération de la fonction liste_entiers.
+*)
+
+
+(*
+repliquer1_liste l réplique la liste l sous forme de listes de 1.
+*)
+let rec repliquer1_liste l =
+  match l with
+  |[] -> []
+  |h::t -> (liste_entiers 1 h) :: repliquer1_liste t;;
+
+
+
+
+(*
+tetes_liste l prend en paramètre une liste de listes, et renvoie la liste composée de chacun de leurs premiers éléments.
+Si une liste de l est vide, alors elle est ignorée.
+*)
+let rec tetes_liste l =
+  match l with
+  |[] -> []
+  |h::t ->
+      match h with
+      |[] -> tetes_liste t
+      |h2::t2 -> h2 :: tetes_liste t;;
+
+
+
+
+(*
+supprimer_tetes_liste l prend en paramètre une liste de listes, et la renvoie en ayant supprimé le premier élément de chacune.
+Si une liste de l est vide, alors elle est ignorée.
+*)
+let rec supprimer_tetes_liste l =
+  match l with
+  |[] -> []
+  |h::t ->
+      match h with
+      |[] -> [] :: supprimer_tetes_liste t
+      |h2::t2 ->  t2 :: supprimer_tetes_liste t;;
+
+
+
+(*
+nb_par_colonne l n calcule récursivement (n fois) la liste des têtes de liste de l,
+puis de l dont on a supprimé les têtes de listes, etc.
+*)
+let rec nb_par_colonne l n = 
+  if n=0
+  then []
+  else tetes_liste l :: (nb_par_colonne (supprimer_tetes_liste l) (n-1));;
+
+
+(* Erreur dans l'énoncé *)
+(*
+nb_par_liste l1 l2 calcule dans l2 la longueur de chaque liste de l1, de droite à gauche.
+*)
+let rec nb_par_liste l1 l2 =
+  match l1 with
+  |[] -> l2
+  |h::t -> nb_par_liste t (List.length h :: l2);;
+
+
+(*
+tri_perles2 l récupère le maximum max de l et le nombre de fois nb 0 où le chiffre 0 apparaı̂t dans l.
+Puis l est répliquée sous forme de listes de 1.
+Ensuite, le nombre d’éléments par colonne de cette liste de 1 est calculé, max + nb 0 fois.
+Après, c’est au tour du nombre d’éléments par colonne de cette nouvelle liste, List.length l fois.
+Enfin, le nombre d’éléments par liste de cette dernière liste est renvoyé, ce qui donne le résultat final.
+*)
+let tri_perles2 l = 
+  match l with
+  |[] -> failwith "La liste est vide, aucun élément à trier"
+  |_ -> nb_par_liste (nb_par_colonne (nb_par_colonne (repliquer1_liste l) ((selectionne_max l) + (compter_tous 0 l))) (List.length l)) []
+  
+  
