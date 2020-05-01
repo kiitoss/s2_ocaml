@@ -3,11 +3,8 @@
 (*
 A TESTER:
   -> Nombres négatifs,
-  -> Doublons.
-
-A VERIFIER:
-  -> Pas de rec inutile,
-  -> Pas de match dans match avant tri perles 2.
+  -> Doublons,
+  -> Float.
 *)
 
 
@@ -49,14 +46,11 @@ supprime e l retourne la liste l privée de la 1ère occurence de e quand elle e
 *)
 let rec supprime e l =
   match l with
-  |[] -> failwith "La liste est vide, aucun élément à supprimer" 
+  |[] -> []
   |h::t ->
       if h = e
       then t
-      else
-        match t with
-        | [] -> h :: t
-        | t -> h :: supprime e t;;
+      else h :: (supprime e t);;
                                       
 
 
@@ -79,7 +73,7 @@ Pour cela, cette fonction sélectionne récursivement le maximum de l, et l’aj
 let rec tri_creation_max l =
   match l with
   |[] -> failwith "La liste est vide, aucun élément à trier"
-  |h::[] -> ajoute_fin (selectionne_max l) (supprime (selectionne_max l) l)
+  |h::[] -> [h]
   |h::t -> ajoute_fin (selectionne_max l) (tri_creation_max (supprime (selectionne_max l) l));;
 
 
@@ -134,8 +128,7 @@ let rec partitionne_pivot_bis l pivot l1 l2 l3 =
 
 
 let partitionne_pivot l pivot =
-  match l with
-  |t -> partitionne_pivot_bis t pivot [] [] [];;
+  partitionne_pivot_bis l pivot [] [] [];;
 
 
 
@@ -199,15 +192,12 @@ enlever_tous v l supprime toutes les occurences de v dans l.
 *)
 let rec enlever_tous v l =
   match l with
-  |[] -> failwith "La liste est vide, aucun élément à supprimer."
-  |h::[] ->
-      if h = v
-      then []
-      else [h]
+  |[] -> []
   |h::t ->
       if h = v
       then enlever_tous v t
       else h :: enlever_tous v t;;
+
 
 
 (*
@@ -482,6 +472,16 @@ Enfin, le nombre d’éléments par liste de cette dernière liste est renvoyé,
 let tri_perles2 l = 
   match l with
   |[] -> failwith "La liste est vide, aucun élément à trier"
-  |_ -> nb_par_liste (nb_par_colonne (nb_par_colonne (repliquer1_liste l) ((selectionne_max l) + (compter_tous 0 l))) (List.length l)) []
-  
-  
+  |_ -> nb_par_liste (nb_par_colonne (nb_par_colonne (repliquer1_liste l) ((selectionne_max l) + (compter_tous 0 l))) (List.length l)) [];;
+
+
+
+
+(*
+Calcule du temps d'execution des fonctions:
+
+let temps_debut = Sys.time () in 
+let _ = telle_fonction_de_tri in 
+let temps_fin = Sys.time () in 
+(temps_fin -. temps_debut) ;;
+*)
